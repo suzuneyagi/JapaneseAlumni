@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Scroll-controlled horizontal image</title>
+<style>
+  body {
+    margin: 0;
+    height: 300vh; /* スクロール量を確保 */
+    background-color: #faf9f4;
+    font-family: sans-serif;
+  }
+
+  .container {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .scroll-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: auto;
+    transform: translateX(0);
+    transition: transform 0.1s linear;
+  }
+
+  .text-overlay {
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    color: #123;
+    background: rgba(255,255,255,0.7);
+    padding: 1em 1.5em;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    max-width: 40%;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Sticky領域 -->
+  <div class="container">
+    <img src="your-wide-image.jpg" alt="wide scene" class="scroll-image" id="wideImage">
+    <div class="text-overlay">
+      <h2>Road to Boston</h2>
+      <p>Scroll down to move through the story → The image flows as you read.</p>
+    </div>
+  </div>
+
+<script>
+const image = document.getElementById("wideImage");
+
+// ページ全体の高さを基準に、スクロール量から画像の移動量を計算
+window.addEventListener("scroll", () => {
+  const scrollTop = window.scrollY;
+  const maxScroll = document.body.scrollHeight - window.innerHeight;
+  const progress = scrollTop / maxScroll; // 0.0〜1.0
+  const translateX = -progress * (image.width - window.innerWidth); // 左方向へ移動
+  image.style.transform = `translateX(${translateX}px)`;
+});
+</script>
+
+</body>
+</html>
