@@ -1,70 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Scroll-controlled horizontal image</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Scroll Text & Pan Image</title>
+
 <style>
   body {
     margin: 0;
-    height: 300vh; /* スクロール量を確保 */
-    background-color: #faf9f4;
-    font-family: sans-serif;
+    font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+    background-color: #f8f8f8;
   }
 
+  /* --- Layout --- */
   .container {
+    display: grid;
+    grid-template-columns: 45% 55%;
+    height: 100vh;
+    position: relative;
+  }
+
+  .text-column {
+    overflow-y: scroll;
+    height: 100vh;
+    padding: 80px 50px;
+    box-sizing: border-box;
+  }
+
+  .text-block {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: 2rem;
+  }
+
+  .text-block h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .text-block p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+
+  /* --- Image column --- */
+  .image-column {
     position: sticky;
     top: 0;
-    width: 100%;
     height: 100vh;
     overflow: hidden;
   }
 
-  .scroll-image {
+  .wide-image {
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
     width: auto;
-    transform: translateX(0);
+    min-width: 100%;
     transition: transform 0.1s linear;
-  }
-
-  .text-overlay {
-    position: absolute;
-    top: 10%;
-    left: 5%;
-    color: #123;
-    background: rgba(255,255,255,0.7);
-    padding: 1em 1.5em;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    max-width: 40%;
   }
 </style>
 </head>
-<body>
 
-  <!-- Sticky領域 -->
+<body>
   <div class="container">
-    <img src="your-wide-image.jpg" alt="wide scene" class="scroll-image" id="wideImage">
-    <div class="text-overlay">
-      <h2>Road to Boston</h2>
-      <p>Scroll down to move through the story → The image flows as you read.</p>
+    <div class="text-column" id="textColumn">
+      <div class="text-block">
+        <h2>Welcome to Our Journey</h2>
+        <p>Scroll down to move through the landscape. The image will pan horizontally as you explore.</p>
+      </div>
+      <div class="text-block">
+        <h2>Discover the Valley</h2>
+        <p>As you move through this section, the panorama shifts to reveal new parts of the scene.</p>
+      </div>
+      <div class="text-block">
+        <h2>Explore the Mountains</h2>
+        <p>The view continues to move, showing the majestic peaks in the distance.</p>
+      </div>
+      <div class="text-block">
+        <h2>End of the Journey</h2>
+        <p>You’ve reached the end of the panorama. Try scrolling back up to revisit the scenery.</p>
+      </div>
+    </div>
+
+    <div class="image-column">
+      <img
+        src="https://thumbs.dreamstime.com/b/panoramic-road-sunrise-summer-travel-panoramic-road-sunrise-summer-travel-background-135924541.jpg"
+        alt="Wide Panorama"
+        class="wide-image"
+        id="panImage"
+      />
     </div>
   </div>
 
-<script>
-const image = document.getElementById("wideImage");
+  <script>
+    // Get references
+    const textColumn = document.getElementById('textColumn');
+    const panImage = document.getElementById('panImage');
 
-// ページ全体の高さを基準に、スクロール量から画像の移動量を計算
-window.addEventListener("scroll", () => {
-  const scrollTop = window.scrollY;
-  const maxScroll = document.body.scrollHeight - window.innerHeight;
-  const progress = scrollTop / maxScroll; // 0.0〜1.0
-  const translateX = -progress * (image.width - window.innerWidth); // 左方向へ移動
-  image.style.transform = `translateX(${translateX}px)`;
-});
-</script>
+    // When text scrolls, update image translation
+    textColumn.addEventListener('scroll', () => {
+      const scrollTop = textColumn.scrollTop;
+      const scrollHeight = textColumn.scrollHeight - textColumn.clientHeight;
 
+      // scroll progress between 0 and 1
+      const progress = scrollTop / scrollHeight;
+
+      // Move image horizontally (adjust multiplier for effect strength)
+      const maxPan = panImage.clientWidth - window.innerWidth * 0.55; // right side width diff
+      const offset = -maxPan * progress;
+
+      panImage.style.transform = `translateX(${offset}px)`;
+    });
+  </script>
 </body>
 </html>
